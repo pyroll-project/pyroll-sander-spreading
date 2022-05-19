@@ -1,0 +1,50 @@
+% Preamble
+\documentclass[11pt]{PyRollDocs}
+\usepackage{textcomp}
+\usepackage{stmaryrd}
+
+\addbibresource{refs.bib}
+
+% Document
+\begin{document}
+
+    \title{The Sander Spreading PyRoll Plugin}
+    \author{Christoph Renzing}
+    \date{\today}
+
+    \maketitle
+
+    This plugin provides a spreading modelling approach with Sander's formula for flat rolling.
+
+
+    \section{Model approach}\label{sec:model-approach}
+
+    \subsection{Sanders's spread equation}\label{subsec:sander's-spread-equation}
+
+    \textcite{Sander1978} proposed \autoref{eq:sander} for estimation of spreading in flat rolling.
+    $h$ and $b$ are height and width of the workpiece with the indices 0 and 1 denoting the incoming respectively the outgoing profile.
+
+    \begin{equation}
+        \beta = \frac{b_1}{b_0} = \frac{h_0}{h_1} ^{w}
+        \label{eq:sander}
+    \end{equation}
+    
+    $w$ is the spread exponent, by \textcite{Sander1978} is given in \autoref{eq:exponent}, where $R$ is the roll radius.
+
+    \begin{equation}
+        w = 10^{ -0.76 \left( \frac{h_0}{b_0} \right)^{0.39} \left(\frac{b_0}{\sqrt{R \Delta h}} \right)^{0.12} \left( \frac{b_0}{R} \right)^{0.59} }
+        \label{eq:exponent}
+    \end{equation}
+
+
+    \section{Usage instructions}\label{sec:usage-instructions}
+
+    The plugin can be loaded under the name \texttt{pyroll\_sander\_spreading}.
+
+    An implementation of the \lstinline{spread} hook on \lstinline{RollPass} is provided, calculating the spread using Sander's model.
+    For \lstinline{sander_exponent} the equations~\ref{eq:exponent} is implemented.
+    Provide your own hook implementations or set attributes on the \lstinline{RollPass} instances to alter the spreading behavior.
+
+    \printbibliography
+
+\end{document}
