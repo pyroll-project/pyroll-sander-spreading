@@ -10,8 +10,8 @@ def sander_exponent(roll_pass: RollPass):
 
     return 10 ** (
             -0.76 * (in_equivalent_width / in_equivalent_height) ** 0.39 * (
-                in_equivalent_width / np.sqrt(roll_pass.roll.nominal_radius * equivalent_height_change)) ** 0.12 * (
-                    in_equivalent_width / roll_pass.roll.nominal_radius) ** 0.59
+                in_equivalent_width / np.sqrt(roll_pass.roll.working_radius * equivalent_height_change)) ** 0.12 * (
+                    in_equivalent_width / roll_pass.roll.working_radius) ** 0.59
     )
 
 
