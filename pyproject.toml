@@ -13,6 +13,13 @@ documentation = "https://github.com/pyroll-project/pyroll-sander-spreading/blob/
 packages = [
     { include = "pyroll/sander_spreading" }
 ]
+readme = "README.md"
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Manufacturing",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering"
+]
 
 
 [tool.poetry.dependencies]
