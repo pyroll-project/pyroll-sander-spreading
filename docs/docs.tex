@@ -3,6 +3,7 @@
 \usepackage{textcomp}
 \usepackage{stmaryrd}
 
+
 \addbibresource{refs.bib}
 
 % Document
@@ -21,14 +22,16 @@
 
     \subsection{Sanders's spread equation}\label{subsec:sander's-spread-equation}
 
-    \textcite{Sander1976, Sander1978} proposed \autoref{eq:sander} for estimation of spreading in flat rolling.
-    $h$ and $b$ are height and width of the workpiece with the indices 0 and 1 denoting the incoming respectively the outgoing profile.
+    \textcite{Sander1976, Sander1978} proposed \autoref{eq:sander} for estimation of spreading in flat rolling,
+    where $\gamma = \frac{h_1}{h_0}$ is the compression. $h$ and $b$ are height and width of the workpiece with the indices
+    0 and 1 denoting the incoming respectively the outgoing profile. $a$, $c$, $d$ and $f$ are correction
+    coefficients for temperature, velocity, material and friction, respectively.
 
     \begin{equation}
-        \beta = \frac{b_1}{b_0} = \frac{h_0}{h_1} ^{w}
+        \beta = \frac{b_1}{b_0} = a \times c \times d \times f \times \gamma^{-w}
         \label{eq:sander}
     \end{equation}
-    
+
     $w$ is the spread exponent, by \textcite{Sander1976} is given in \autoref{eq:exponent}, where $R$ is the roll radius.
 
     \begin{equation}
@@ -36,14 +39,57 @@
         \label{eq:exponent}
     \end{equation}
 
+    \noindent The temperature coefficient $a$ is implement using the below condition for various temperature ranges.
+
+    \begin{equation}
+        a =
+        \begin{cases}
+            1.005          & \text{if }  \qty{700}{\celsius} \leq \vartheta \leq \qty{950}{\celsius}\\
+            1              & \text{otherwise}
+        \end{cases}
+        \label{eq:temperature-coefficient}
+    \end{equation}
+
+    \noindent The velocity coefficient $c$ can be assumed as below in dependence on the velocity $v$.
+
+    \begin{equation}
+        c = 1 - 0.0033 v \left( 1 - \frac{1}{\beta} \right)
+        \label{eq:velocity-coefficient}
+    \end{equation}
+
+    The origin of this equation was first given by \textcite{Hill1955} which derived the equation from plastic stress-strain equations from \textcite{Mises1913}.
+
 
     \section{Usage instructions}\label{sec:usage-instructions}
 
     The plugin can be loaded under the name \texttt{pyroll\_sander\_spreading}.
 
-    An implementation of the \lstinline{spread} hook on \lstinline{RollPass} is provided, calculating the spread using Sander's model.
-    For \lstinline{sander_exponent} the equations~\ref{eq:exponent} is implemented.
+    An implementation of the \lstinline{width} hook on \lstinline{RollPass.out_profile} is provided,
+    calculating the width using the equivalent rectangle approach and Sander's model.
+
+    Several additional hooks on \lstinline{RollPass} are defined, which are used in spread calculation, as listed in \autoref{tab:hookspecs}.
+    Base implementations of them are provided, so it should work out of the box.
+    For \lstinline{sander_exponent}, \lstinline{sander_temperature_coefficient} and \lstinline{sander_velocity_coefficient}
+    the equations~\ref{eq:exponent},~\ref{eq:temperature-coefficient} and~\ref{eq:velocity-coefficient} are implemented.
+    The others default to \num{1}.
     Provide your own hook implementations or set attributes on the \lstinline{RollPass} instances to alter the spreading behavior.
+
+    \begin{table}
+        \centering
+        \caption{Hooks specified by this plugin. Symbols as in \autoref{eq:sander}.}
+        \label{tab:hookspecs}
+        \begin{tabular}{ll}
+            \toprule
+            Hook name                                 & Meaning                                \\
+            \midrule
+            \texttt{sander\_temperature\_coefficient} & temperature correction coefficient $a$ \\
+            \texttt{sander\_velocity\_coefficient}    & velocity correction coefficient $c$    \\
+            \texttt{sander\_material\_coefficient}    & material correction coefficient $d$    \\
+            \texttt{sander\_friction\_coefficient}    & friction correction coefficient $f$    \\
+            \texttt{sander\_exponent}                 & spread exponent $w$                    \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 
     \printbibliography
 
