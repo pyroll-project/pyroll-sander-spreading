@@ -1,15 +1,26 @@
 import numpy as np
 
-from pyroll.core import RollPass, root_hooks, Unit
+from pyroll.core import RollPass, ThreeRollPass, root_hooks, Unit
 from pyroll.core.hooks import Hook
 
-VERSION = "2.0.0b"
+VERSION = "2.0.0"
 
 RollPass.sander_temperature_coefficient = Hook[float]()
+"""Temperature correction factor a for Sander's spread equation."""
+
 RollPass.sander_velocity_coefficient = Hook[float]()
+"""Velocity correction factor c for Sander's spread equation."""
+
 RollPass.sander_material_coefficient = Hook[float]()
+"""Material correction factor d for Sander's spread equation."""
+
 RollPass.sander_friction_coefficient = Hook[float]()
+"""Friction correction factor f for Sander's spread equation."""
+
 RollPass.sander_exponent = Hook[float]()
+"""Exponent w for for Sander's spread equation."""
+
+root_hooks.add(Unit.OutProfile.width)
 
 
 @RollPass.sander_temperature_coefficient
@@ -50,22 +61,32 @@ def sander_exponent(self: RollPass):
     )
 
 
-@RollPass.OutProfile.width
-def width(self: RollPass.OutProfile):
-    roll_pass = self.roll_pass()
-
-    if not self.has_set_or_cached("width"):
-        self.width = roll_pass.roll.groove.usable_width
-
-    spread = (
-            roll_pass.sander_temperature_coefficient
-            * roll_pass.sander_velocity_coefficient
-            * roll_pass.sander_material_coefficient
-            * roll_pass.sander_friction_coefficient
-            * roll_pass.draught ** (-roll_pass.sander_exponent)
+@RollPass.spread
+def spread(self: RollPass):
+    return (
+            self.sander_temperature_coefficient
+            * self.sander_velocity_coefficient
+            * self.sander_material_coefficient
+            * self.sander_friction_coefficient
+            * self.draught ** (-self.sander_exponent)
     )
 
-    return spread * roll_pass.in_profile.width
+
+@RollPass.OutProfile.width
+def width(self: RollPass.OutProfile):
+    rp = self.roll_pass
+
+    if not self.has_set_or_cached("width"):
+        return None
+
+    return rp.spread * rp.in_profile.width
 
 
-root_hooks.add(Unit.OutProfile.width)
+@ThreeRollPass.OutProfile.width
+def width(self: RollPass.OutProfile):
+    rp = self.roll_pass
+
+    if not self.has_set_or_cached("width"):
+        return None
+
+    return rp.spread * rp.in_profile.width
