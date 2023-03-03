@@ -61,17 +61,6 @@ def sander_exponent(self: RollPass):
     )
 
 
-@RollPass.spread
-def spread(self: RollPass):
-    return (
-            self.sander_temperature_coefficient
-            * self.sander_velocity_coefficient
-            * self.sander_material_coefficient
-            * self.sander_friction_coefficient
-            * self.draught ** (-self.sander_exponent)
-    )
-
-
 @RollPass.OutProfile.width
 def width(self: RollPass.OutProfile):
     rp = self.roll_pass
@@ -79,7 +68,13 @@ def width(self: RollPass.OutProfile):
     if not self.has_set_or_cached("width"):
         return None
 
-    return rp.spread * rp.in_profile.width
+    return (
+            rp.sander_temperature_coefficient
+            * rp.sander_velocity_coefficient
+            * rp.sander_material_coefficient
+            * rp.sander_friction_coefficient
+            * rp.draught ** (-rp.sander_exponent)
+    ) * rp.in_profile.width
 
 
 @ThreeRollPass.OutProfile.width
@@ -89,4 +84,10 @@ def width(self: RollPass.OutProfile):
     if not self.has_set_or_cached("width"):
         return None
 
-    return rp.spread * rp.in_profile.width
+    return (
+            rp.sander_temperature_coefficient
+            * rp.sander_velocity_coefficient
+            * rp.sander_material_coefficient
+            * rp.sander_friction_coefficient
+            * rp.draught ** (-rp.sander_exponent)
+    ) * rp.in_profile.width
