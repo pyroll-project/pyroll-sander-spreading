@@ -1,6 +1,6 @@
 [project]
 name = "pyroll-sander-spreading"
-description = "Plugin for PyRoll providing the Sander spreading model."
+description = "Plugin for PyRolL providing spreading claclulation using Sanders's equation."
 authors = [
     { name = "Christoph Renzing", email = "christoph.renzing@imf.tu-freiberg.de" }
 ]
