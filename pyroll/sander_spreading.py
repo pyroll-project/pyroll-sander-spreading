@@ -3,7 +3,7 @@ import numpy as np
 from pyroll.core import BaseRollPass, root_hooks, Unit
 from pyroll.core.hooks import Hook
 
-VERSION = "3.0"
+VERSION = "3.0.0"
 
 BaseRollPass.sander_temperature_coefficient = Hook[float]()
 """Temperature correction factor a for Sander's spread equation."""
